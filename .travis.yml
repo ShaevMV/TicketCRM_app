@@ -1,0 +1,39 @@
+dist: xenial
+
+language: php
+
+php:
+  - 7.4
+
+services:
+  - mysql
+
+cache:
+  directories:
+    - node_modules
+    - vendor
+
+before_script:
+  - cp .env.travis .env
+  - cp .env.travis frontend/.env
+  - composer self-update
+  - composer install --no-interaction
+  - mysql --version
+  - mysql -e 'CREATE DATABASE IF NOT EXISTS laravel;'
+  - ip addr show
+  - php artisan migrate:refresh --seed
+  - php artisan serve --env=testing --no-ansi --no-interaction --port=8888 --host=localhost &
+  - php artisan config:clear
+  - php artisan cache:clear
+  - php artisan config:cache
+
+script:
+  - vendor/bin/phpunit --configuration phpunit.xml
+  - vendor/bin/phpcs
+  - vendor/bin/phpstan analyse
+
+after_success:
+  - travis_retry php vendor/bin/php-coveralls
+
+env:
+  - APP_URL_DOCKER=http://localhost:8888/

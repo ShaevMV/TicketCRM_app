@@ -1,0 +1,12 @@
+docker
+.blackfire.ini
+.idea
+.git
+.cache
+.npm
+.node-gyp
+.config
+.bash_history
+_ide_helper.php
+npm-debug.log
+.phpstorm.meta.php
